@@ -1,9 +1,27 @@
 const express = require("express");
+const jwt = require("jsonwebtoken");
 const app = express();
 const port = 8080;
 
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
 app.get("/", (req, res, next) => {
   res.send("hello there");
+});
+
+app.post("/login", (req, res, next) => {
+  const { userName, password } = req.body;
+
+  const token = jwt.sign(
+    { userName: userName, password: password },
+    "top-secret",
+    {
+      expiresIn: "1h",
+    }
+  );
+
+  res.status(200).json({ token: token });
 });
 
 app.listen(port, () =>
