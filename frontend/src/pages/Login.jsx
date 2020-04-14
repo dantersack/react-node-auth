@@ -1,22 +1,20 @@
 import React, { useState } from "react";
-import { Link, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import logoImg from "../img/one-piece.jpg";
-import { Card, Logo, Form, Input, Button, Error } from "../components/AuthForm";
+import { Card, Logo, Form, Input, Button } from "../components/AuthForm";
 import { useAuth } from "../context/Auth";
 import axios from "axios";
 
 function Login(props) {
-  const [isLoggedIn, setLoggedIn] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { authToken, setAuthToken } = useAuth();
+  const { authToken, setAuthToken, setLoggedIn } = useAuth();
 
-  const referrer = props.location.state.referrer || "/";
+  const referrer = props.location.state ? props.location.state.referrer : "/";
 
   function postLogin() {
     axios
-      .post("http://localhost:8080/login", { userName, password })
+      .post("http://localhost:8080/login", { email, password })
       .then((res) => {
         console.log(res.data.token);
 
@@ -24,13 +22,14 @@ function Login(props) {
           setAuthToken(res.data.token);
           setLoggedIn(true);
         } else {
-          setIsError(true);
+          console.log("Login failed.");
         }
       })
-      .catch((err) => setIsError(true));
+      .catch((err) => console.log(err));
   }
 
   if (authToken) {
+    //return <Redirect to="/" />;
     return <Redirect to={referrer} />;
   }
 
@@ -41,21 +40,19 @@ function Login(props) {
         <Input
           type="email"
           placeholder="email"
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required={true}
         />
         <Input
           type="password"
           placeholder="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required={true}
         />
         <Button onClick={postLogin}>Sign In</Button>
       </Form>
-      <Link to="/signup">Don't have an account?</Link>
-      {isError && (
-        <Error>The username or password provided were incorrect!</Error>
-      )}
     </Card>
   );
 }

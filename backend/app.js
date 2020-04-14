@@ -13,15 +13,11 @@ app.get("/", (req, res, next) => {
 });
 
 app.post("/login", (req, res, next) => {
-  const { userName, password } = req.body;
+  const { email, password } = req.body;
 
-  const token = jwt.sign(
-    { userName: userName, password: password },
-    "top-secret",
-    {
-      expiresIn: "1h",
-    }
-  );
+  const token = jwt.sign({ email: email, password: password }, "top-secret", {
+    expiresIn: "1h",
+  });
 
   res.status(200).json({ token: token });
 });

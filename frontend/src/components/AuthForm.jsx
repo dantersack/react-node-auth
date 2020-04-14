@@ -40,8 +40,4 @@ const Logo = styled.img`
   margin-bottom: 1rem;
 `;
 
-const Error = styled.div`
-  background-color: red;
-`;
-
-export { Form, Input, Button, Logo, Card, Error };
+export { Form, Input, Button, Logo, Card };
