@@ -3,13 +3,19 @@ import { Route, Redirect } from "react-router-dom";
 import { useAuth } from "../context/Auth";
 
 function PrivateRoute({ component: Component, ...rest }) {
-  const isAuthenticated = useAuth();
+  const { authToken } = useAuth();
 
   return (
     <Route
       {...rest}
       render={(props) =>
-        isAuthenticated ? <Component {...props} /> : <Redirect to="/login" />
+        authToken ? (
+          <Component {...props} />
+        ) : (
+          <Redirect
+            to={{ pathname: "/login", state: { referrer: props.location } }}
+          />
+        )
       }
     />
   );

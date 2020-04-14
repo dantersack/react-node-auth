@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Link, Route } from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -7,9 +7,22 @@ import Admin from "./pages/Admin";
 import { AuthContext } from "./context/Auth";
 import PrivateRoute from "./components/PrivateRoute";
 
-function App() {
+function App(props) {
+  const [authToken, setAuthToken] = useState();
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      setAuthToken(localStorage.getItem("token"));
+    }
+  }, []);
+
+  const setToken = (data) => {
+    localStorage.setItem("token", JSON.stringify(data));
+    setAuthToken(data);
+  };
+
   return (
-    <AuthContext.Provider value={false}>
+    <AuthContext.Provider value={{ authToken, setAuthToken: setToken }}>
       <Router>
         <div>
           <ul>
@@ -23,7 +36,7 @@ function App() {
 
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />
-          <Route exact path="/" component={Home} />
+          <PrivateRoute exact path="/" component={Home} />
           <PrivateRoute path="/admin" component={Admin} />
         </div>
       </Router>
